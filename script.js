@@ -266,10 +266,10 @@ function startTypewriter(screenNum) {
 
             index++;
 
-            // Super fast typing delay
-            let delay = Math.floor(Math.random() * 3) + 2;
-            if (char === '.' || char === '؟' || char === '!') delay += 15;
-            if (char === '\n') delay += 20;
+            // Balanced, natural romantic typing speed
+            let delay = Math.floor(Math.random() * 15) + 25;
+            if (char === '.' || char === '؟' || char === '!') delay += 120;
+            if (char === '\n') delay += 150;
 
             typewriterTimeouts[screenNum] = setTimeout(typeChar, delay);
         } else {
