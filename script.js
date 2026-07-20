@@ -142,10 +142,9 @@ function playSongAudio() {
         });
     }
 
-    // Play Full Song via YouTube Player Embed
-    const musicIframe = document.getElementById('musicIframe');
-    if (musicIframe) {
-        musicIframe.src = "https://www.youtube-nocookie.com/embed/sD4W072o_b0?autoplay=1&loop=1&playlist=sD4W072o_b0";
+    const spotifyIframe = document.getElementById('spotifyIframe');
+    if (spotifyIframe) {
+        spotifyIframe.src = "https://open.spotify.com/embed/track/7dR4nnWzcUDpcW67jnOTfs?utm_source=generator&theme=0&autoplay=1";
     }
 }
 
