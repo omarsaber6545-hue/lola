@@ -219,7 +219,6 @@ function setupNavigation() {
         showerActive = true; // Intensify hearts on final screen
         switchScreen(screen2, screen3, () => {
             currentScreen = 3;
-            triggerHeartBurst(window.innerWidth / 2, window.innerHeight / 2, 40);
             startTypewriter(3);
         });
     });
@@ -328,10 +327,12 @@ function finishTyping(screenNum) {
         footer.classList.add('show');
     }, 100);
 
-    // If Screen 3, reveal giant headline & explosion
+    // If Screen 3, reveal giant headline & falling heart shower
     if (screenNum === 3) {
         const grandReveal = document.getElementById('grand-reveal');
-        grandReveal.classList.remove('hidden');
-        triggerHeartBurst(window.innerWidth / 2, window.innerHeight / 3, 50);
+        if (grandReveal) {
+            grandReveal.classList.remove('hidden');
+        }
+        showerActive = true;
     }
 }
