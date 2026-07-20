@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لأحلى لولا ❤️</title>
+    <meta name="description" content="موقع مفاجأة رومانسية لأحلى لولا في الدنيا كلها">
+    
+    <!-- Google Fonts for Luxury Arabic Typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Cairo:wght@400;600;700;900&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Interactive Particle Canvas for Background Hearts & Sparkles -->
+    <canvas id="particleCanvas"></canvas>
+
+    <!-- Music Control Button -->
+    <button id="musicToggle" class="music-btn" aria-label="تشغيل / إيقاف الموسيقى" title="تشغيل الموسيقى الهادئة">
+        <span class="music-icon">🎵</span>
+        <span class="music-text">موسيقى هادئة</span>
+    </button>
+
+    <main class="app-container">
+
+        <!-- ==================== SCREEN 0: PASSWORD ==================== -->
+        <section id="screen-password" class="card-screen active">
+            <div class="glass-card">
+                <div class="heart-badge">❤️</div>
+                <h1 class="main-title gold-glow">لأحلى لولا ❤️</h1>
+                <p class="subtitle">ادخلي كلمة السر علشان تكملي المفاجأة.</p>
+
+                <form id="password-form" class="password-box" onsubmit="return false;">
+                    <div class="input-wrapper">
+                        <input type="password" id="password-input" placeholder="كلمة السر..." autocomplete="off" autofocus>
+                        <button type="submit" id="password-btn" class="pink-glow-btn">
+                            <span>دخول المفاجأة</span>
+                            <span class="btn-icon">✨</span>
+                        </button>
+                    </div>
+                    <div id="error-message" class="error-msg" aria-live="polite"></div>
+                </form>
+            </div>
+        </section>
+
+        <!-- ==================== SCREEN 1: FIRST MESSAGE ==================== -->
+        <section id="screen-1" class="card-screen">
+            <div class="glass-card text-card">
+                <div class="card-header">
+                    <span class="step-tag">الصفحة الأولى 🌹</span>
+                </div>
+                
+                <div class="message-container">
+                    <p id="typewriter-1" class="typewriter-text"></p>
+                </div>
+
+                <div class="card-footer hidden" id="footer-1">
+                    <button id="btn-to-screen-2" class="action-btn next-btn">
+                        <span>كملي ❤️</span>
+                    </button>
+                </div>
+
+                <button class="skip-btn" onclick="skipTypewriter(1)">تخطي الكتابة ⚡</button>
+            </div>
+        </section>
+
+        <!-- ==================== SCREEN 2: SECOND MESSAGE ==================== -->
+        <section id="screen-2" class="card-screen">
+            <div class="glass-card text-card">
+                <div class="card-header">
+                    <span class="step-tag">الصفحة الثانية ✨</span>
+                </div>
+
+                <div class="message-container">
+                    <p id="typewriter-2" class="typewriter-text"></p>
+                </div>
+
+                <div class="card-footer hidden" id="footer-2">
+                    <button id="btn-to-screen-3" class="action-btn next-btn">
+                        <span>آخر حاجة ❤️</span>
+                    </button>
+                </div>
+
+                <button class="skip-btn" onclick="skipTypewriter(2)">تخطي الكتابة ⚡</button>
+            </div>
+        </section>
+
+        <!-- ==================== SCREEN 3: FINAL MESSAGE ==================== -->
+        <section id="screen-3" class="card-screen">
+            <div class="glass-card text-card final-card">
+                <div class="card-header">
+                    <span class="step-tag">الرسالة الأخيرة 💖</span>
+                </div>
+
+                <div class="message-container">
+                    <p id="typewriter-3" class="typewriter-text"></p>
+                </div>
+
+                <div id="grand-reveal" class="grand-reveal hidden">
+                    <div class="hearts-glow-bg"></div>
+                    <h1 class="love-declaration gold-text-glow">❤️ بحبك يا لولا ❤️</h1>
+                </div>
+
+                <div class="card-footer hidden" id="footer-3">
+                    <button id="btn-restart" class="action-btn restart-btn">
+                        <span>اقريها تاني ❤️</span>
+                    </button>
+                </div>
+
+                <button class="skip-btn" id="skip-3" onclick="skipTypewriter(3)">تخطي الكتابة ⚡</button>
+            </div>
+        </section>
+
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
