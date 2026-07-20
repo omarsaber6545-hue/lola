@@ -194,16 +194,30 @@ function playRomanticMelody() {
 }
 
 function toggleMusic() {
-    initAudio();
+    const bgAudio = document.getElementById('bgAudio');
     isMusicPlaying = !isMusicPlaying;
 
     if (isMusicPlaying) {
         musicToggleBtn.classList.add('playing');
         musicToggleBtn.querySelector('.music-text').textContent = 'إيقاف الموسيقى';
-        playRomanticMelody();
+        
+        // Soft audio volume set to 20% (0.2)
+        if (bgAudio && bgAudio.src) {
+            bgAudio.volume = 0.2;
+            bgAudio.play().then(() => {
+                if (synthTimer) clearTimeout(synthTimer);
+            }).catch(() => {
+                initAudio();
+                playRomanticMelody();
+            });
+        } else {
+            initAudio();
+            playRomanticMelody();
+        }
     } else {
         musicToggleBtn.classList.remove('playing');
         musicToggleBtn.querySelector('.music-text').textContent = 'موسيقى هادئة';
+        if (bgAudio) bgAudio.pause();
         if (synthTimer) clearTimeout(synthTimer);
     }
 }
@@ -353,10 +367,10 @@ function startTypewriter(screenNum) {
 
             index++;
 
-            // Ultra-fast fluid typing delay
-            let delay = Math.floor(Math.random() * 5) + 5;
-            if (char === '.' || char === '؟' || char === '!') delay += 40;
-            if (char === '\n') delay += 50;
+            // Super fast typing delay
+            let delay = Math.floor(Math.random() * 3) + 2;
+            if (char === '.' || char === '؟' || char === '!') delay += 15;
+            if (char === '\n') delay += 20;
 
             typewriterTimeouts[screenNum] = setTimeout(typeChar, delay);
         } else {

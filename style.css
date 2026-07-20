@@ -101,9 +101,31 @@ html, body {
     z-index: 10;
     min-height: 100vh;
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     padding: 20px;
+    gap: 15px;
+}
+
+/* Spotify Player Container */
+.spotify-widget-container {
+    width: 100%;
+    max-width: 680px;
+    z-index: 20;
+    background: rgba(36, 14, 33, 0.7);
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-radius: 20px;
+    padding: 6px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), 0 0 20px rgba(255, 94, 128, 0.2);
+    transition: all 0.3s ease;
+}
+
+.spotify-widget-container:hover {
+    border-color: var(--pink-light);
+    box-shadow: 0 12px 35px rgba(255, 94, 128, 0.4);
 }
 
 /* Screen Transitions */
