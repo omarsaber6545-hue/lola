@@ -149,6 +149,19 @@ function validatePassword() {
         errorMessage.textContent = '';
         glassCard.classList.remove('shake');
 
+        // Play Spotify track on password unlock
+        const spotifyIframe = document.getElementById('spotifyIframe');
+        if (spotifyIframe) {
+            spotifyIframe.src = "https://open.spotify.com/embed/track/7dR4nnWzcUDpcW67jnOTfs?utm_source=generator&theme=0&autoplay=1";
+        }
+
+        // Play background audio at soft volume (20%)
+        const bgAudio = document.getElementById('bgAudio');
+        if (bgAudio) {
+            bgAudio.volume = 0.2;
+            bgAudio.play().catch(() => {});
+        }
+
         // Transition to Screen 1
         switchScreen(screenPassword, screen1, () => {
             currentScreen = 1;
