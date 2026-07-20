@@ -378,10 +378,10 @@ function startTypewriter(screenNum) {
 
             index++;
 
-            // Faster typing delay with slight natural variation
-            let delay = Math.floor(Math.random() * 10) + 12;
-            if (char === '.' || char === '؟' || char === '!') delay += 80;
-            if (char === '\n') delay += 100;
+            // Ultra-fast fluid typing delay
+            let delay = Math.floor(Math.random() * 5) + 5;
+            if (char === '.' || char === '؟' || char === '!') delay += 40;
+            if (char === '\n') delay += 50;
 
             typewriterTimeouts[screenNum] = setTimeout(typeChar, delay);
         } else {
