@@ -131,6 +131,67 @@ function renderParticles() {
 }
 
 /* ==========================================================================
+   GUARANTEED SOFT BACKGROUND AUDIO ENGINE
+   ========================================================================== */
+let audioCtx = null;
+let isAudioPlaying = false;
+let synthTimer = null;
+
+function startSoftAmbientMusic() {
+    if (isAudioPlaying) return;
+    isAudioPlaying = true;
+
+    const bgAudio = document.getElementById('bgAudio');
+    if (bgAudio && bgAudio.src && bgAudio.src.includes('.mp3')) {
+        bgAudio.volume = 0.2;
+        bgAudio.play().then(() => {}).catch(() => {
+            playSoftNoteLoop();
+        });
+    } else {
+        playSoftNoteLoop();
+    }
+}
+
+function playSoftNoteLoop() {
+    if (!isAudioPlaying) return;
+    if (!audioCtx) {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        audioCtx = new AudioContext();
+    }
+    if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+    }
+
+    const notes = [261.63, 329.63, 392.00, 493.88, 523.25, 349.23, 440.00, 659.25];
+    const note = notes[Math.floor(Math.random() * notes.length)];
+
+    try {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        const filter = audioCtx.createBiquadFilter();
+
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(note, audioCtx.currentTime);
+        filter.type = 'lowpass';
+        filter.frequency.setValueAtTime(700, audioCtx.currentTime);
+
+        const now = audioCtx.currentTime;
+        gain.gain.setValueAtTime(0.001, now);
+        gain.gain.linearRampToValueAtTime(0.08, now + 0.5);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + 4.0);
+
+        osc.connect(filter);
+        filter.connect(gain);
+        gain.connect(audioCtx.destination);
+
+        osc.start(now);
+        osc.stop(now + 4.1);
+    } catch (e) {}
+
+    synthTimer = setTimeout(playSoftNoteLoop, Math.random() * 1000 + 1500);
+}
+
+/* ==========================================================================
    PASSWORD VALIDATION
    ========================================================================== */
 function setupPasswordForm() {
@@ -149,18 +210,14 @@ function validatePassword() {
         errorMessage.textContent = '';
         glassCard.classList.remove('shake');
 
-        // Play Spotify track on password unlock
+        // Trigger Spotify player autoplay attempt
         const spotifyIframe = document.getElementById('spotifyIframe');
         if (spotifyIframe) {
             spotifyIframe.src = "https://open.spotify.com/embed/track/7dR4nnWzcUDpcW67jnOTfs?utm_source=generator&theme=0&autoplay=1";
         }
 
-        // Play background audio at soft volume (20%)
-        const bgAudio = document.getElementById('bgAudio');
-        if (bgAudio) {
-            bgAudio.volume = 0.2;
-            bgAudio.play().catch(() => {});
-        }
+        // Trigger soft ambient music playback (guaranteed on click gesture)
+        startSoftAmbientMusic();
 
         // Transition to Screen 1
         switchScreen(screenPassword, screen1, () => {
@@ -279,10 +336,10 @@ function startTypewriter(screenNum) {
 
             index++;
 
-            // Balanced, natural romantic typing speed
-            let delay = Math.floor(Math.random() * 15) + 25;
-            if (char === '.' || char === '؟' || char === '!') delay += 120;
-            if (char === '\n') delay += 150;
+            // Gentle, relaxed romantic typing speed
+            let delay = Math.floor(Math.random() * 20) + 38;
+            if (char === '.' || char === '؟' || char === '!') delay += 160;
+            if (char === '\n') delay += 200;
 
             typewriterTimeouts[screenNum] = setTimeout(typeChar, delay);
         } else {
