@@ -61,7 +61,6 @@ document.addEventListener('DOMContentLoaded', () => {
     setupPasswordForm();
     setupNavigation();
     setupMusicToggle();
-    setupMouseTrailHearts();
 });
 
 /* ==========================================================================
@@ -82,36 +81,34 @@ function initCanvas() {
     resize();
     window.addEventListener('resize', resize);
 
-    // Initial ambient particles
-    for (let i = 0; i < 35; i++) {
+    // Initial lightweight ambient particles (20 max for silky performance)
+    for (let i = 0; i < 20; i++) {
         particles.push(createParticle(true));
     }
 
     requestAnimationFrame(renderParticles);
 }
 
-function createParticle(randomY = false, x = null, y = null, isBurst = false) {
-    const isHeartShape = Math.random() > 0.3;
+function createParticle(randomY = false) {
     return {
-        x: x !== null ? x : Math.random() * canvas.width,
-        y: y !== null ? y : (randomY ? Math.random() * canvas.height : canvas.height + 20),
-        size: isBurst ? (Math.random() * 18 + 14) : (Math.random() * 14 + 10),
-        speedY: isBurst ? (Math.random() * -3 - 1) : (Math.random() * -1.2 - 0.4),
-        speedX: isBurst ? (Math.random() * 4 - 2) : (Math.random() * 0.8 - 0.4),
-        opacity: isBurst ? 1 : Math.random() * 0.7 + 0.3,
+        x: Math.random() * canvas.width,
+        y: randomY ? Math.random() * canvas.height : canvas.height + 20,
+        size: Math.random() * 12 + 10,
+        speedY: Math.random() * -1.0 - 0.3,
+        speedX: Math.random() * 0.6 - 0.3,
+        opacity: Math.random() * 0.6 + 0.3,
         symbol: HEART_TYPES[Math.floor(Math.random() * HEART_TYPES.length)],
         rotation: Math.random() * 360,
-        rotSpeed: (Math.random() - 0.5) * 2,
-        isBurst: isBurst,
-        life: isBurst ? 100 : Infinity
+        rotSpeed: (Math.random() - 0.5) * 1.5
     };
 }
 
 function renderParticles() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    // If heart shower active on final screen, add more particles
-    if (showerActive && particles.length < 120 && Math.random() < 0.6) {
+    // Controlled particle count for smooth 60 FPS performance
+    const maxAllowed = showerActive ? 45 : 20;
+    if (particles.length < maxAllowed && Math.random() < 0.3) {
         particles.push(createParticle(false));
     }
 
@@ -121,76 +118,23 @@ function renderParticles() {
         p.x += p.speedX;
         p.rotation += p.rotSpeed;
 
-        if (p.isBurst) {
-            p.life--;
-            p.opacity = p.life / 100;
-        }
-
         ctx.save();
         ctx.translate(p.x, p.y);
         ctx.rotate((p.rotation * Math.PI) / 180);
-        ctx.globalAlpha = Math.max(0, p.opacity);
+        ctx.globalAlpha = p.opacity;
         ctx.font = `${p.size}px Arial`;
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
         ctx.fillText(p.symbol, 0, 0);
         ctx.restore();
 
-        // Respawn normal particles
-        if (!p.isBurst && p.y < -30) {
+        // Respawn particles smoothly
+        if (p.y < -30) {
             particles[i] = createParticle(false);
-        } else if (p.isBurst && p.life <= 0) {
-            particles.splice(i, 1);
         }
     }
 
     requestAnimationFrame(renderParticles);
-}
-
-function createMouseTrailParticle(x, y) {
-    return {
-        x: x + (Math.random() * 14 - 7),
-        y: y + (Math.random() * 14 - 7),
-        size: Math.random() * 12 + 10,
-        speedY: Math.random() * -1.2 - 0.4,
-        speedX: Math.random() * 1.4 - 0.7,
-        opacity: 0.95,
-        symbol: HEART_TYPES[Math.floor(Math.random() * HEART_TYPES.length)],
-        rotation: Math.random() * 360,
-        rotSpeed: (Math.random() - 0.5) * 3,
-        isBurst: true,
-        life: 40 // Soft fade out over 40 frames
-    };
-}
-
-let lastMouseX = 0;
-let lastMouseY = 0;
-let lastMoveTime = 0;
-
-function setupMouseTrailHearts() {
-    function handlePointerMove(clientX, clientY) {
-        const now = Date.now();
-        const dist = Math.hypot(clientX - lastMouseX, clientY - lastMouseY);
-
-        if (dist > 15 || now - lastMoveTime > 60) {
-            lastMouseX = clientX;
-            lastMouseY = clientY;
-            lastMoveTime = now;
-
-            // Add smooth trail heart particle behind cursor
-            particles.push(createMouseTrailParticle(clientX, clientY));
-        }
-    }
-
-    window.addEventListener('mousemove', (e) => {
-        handlePointerMove(e.clientX, e.clientY);
-    });
-
-    window.addEventListener('touchmove', (e) => {
-        if (e.touches && e.touches[0]) {
-            handlePointerMove(e.touches[0].clientX, e.touches[0].clientY);
-        }
-    }, { passive: true });
 }
 
 /* ==========================================================================
