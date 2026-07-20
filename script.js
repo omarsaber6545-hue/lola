@@ -61,7 +61,7 @@ document.addEventListener('DOMContentLoaded', () => {
     setupPasswordForm();
     setupNavigation();
     setupMusicToggle();
-    setupClickHearts();
+    setupMouseTrailHearts();
 });
 
 /* ==========================================================================
@@ -147,19 +147,50 @@ function renderParticles() {
     requestAnimationFrame(renderParticles);
 }
 
-function triggerHeartBurst(x, y, count = 20) {
-    for (let i = 0; i < count; i++) {
-        particles.push(createParticle(false, x, y, true));
-    }
+function createMouseTrailParticle(x, y) {
+    return {
+        x: x + (Math.random() * 14 - 7),
+        y: y + (Math.random() * 14 - 7),
+        size: Math.random() * 12 + 10,
+        speedY: Math.random() * -1.2 - 0.4,
+        speedX: Math.random() * 1.4 - 0.7,
+        opacity: 0.95,
+        symbol: HEART_TYPES[Math.floor(Math.random() * HEART_TYPES.length)],
+        rotation: Math.random() * 360,
+        rotSpeed: (Math.random() - 0.5) * 3,
+        isBurst: true,
+        life: 40 // Soft fade out over 40 frames
+    };
 }
 
-function setupClickHearts() {
-    window.addEventListener('click', (e) => {
-        // Don't burst on input or button click to avoid clutter
-        if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'BUTTON') {
-            triggerHeartBurst(e.clientX, e.clientY, 8);
+let lastMouseX = 0;
+let lastMouseY = 0;
+let lastMoveTime = 0;
+
+function setupMouseTrailHearts() {
+    function handlePointerMove(clientX, clientY) {
+        const now = Date.now();
+        const dist = Math.hypot(clientX - lastMouseX, clientY - lastMouseY);
+
+        if (dist > 15 || now - lastMoveTime > 60) {
+            lastMouseX = clientX;
+            lastMouseY = clientY;
+            lastMoveTime = now;
+
+            // Add smooth trail heart particle behind cursor
+            particles.push(createMouseTrailParticle(clientX, clientY));
         }
+    }
+
+    window.addEventListener('mousemove', (e) => {
+        handlePointerMove(e.clientX, e.clientY);
     });
+
+    window.addEventListener('touchmove', (e) => {
+        if (e.touches && e.touches[0]) {
+            handlePointerMove(e.touches[0].clientX, e.touches[0].clientY);
+        }
+    }, { passive: true });
 }
 
 /* ==========================================================================
