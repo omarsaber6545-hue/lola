@@ -39,11 +39,6 @@ const PAGE_TEXTS = {
 let currentScreen = 0;
 let typewriterTimeouts = {};
 let isTyping = false;
-let audioCtx = null;
-let isMusicPlaying = false;
-let synthTimer = null;
-let showerActive = false;
-
 // DOM Elements
 const screenPassword = document.getElementById('screen-password');
 const screen1 = document.getElementById('screen-1');
@@ -53,14 +48,12 @@ const screen3 = document.getElementById('screen-3');
 const passwordInput = document.getElementById('password-input');
 const passwordForm = document.getElementById('password-form');
 const errorMessage = document.getElementById('error-message');
-const musicToggleBtn = document.getElementById('musicToggle');
 
 // Initialization
 document.addEventListener('DOMContentLoaded', () => {
     initCanvas();
     setupPasswordForm();
     setupNavigation();
-    setupMusicToggle();
 });
 
 /* ==========================================================================
@@ -138,95 +131,6 @@ function renderParticles() {
 }
 
 /* ==========================================================================
-   ROMANTIC WEB AUDIO SYNTHESIZER
-   ========================================================================== */
-function initAudio() {
-    if (!audioCtx) {
-        const AudioContext = window.AudioContext || window.webkitAudioContext;
-        audioCtx = new AudioContext();
-    }
-    if (audioCtx.state === 'suspended') {
-        audioCtx.resume();
-    }
-}
-
-function playRomanticMelody() {
-    if (!audioCtx || !isMusicPlaying) return;
-
-    // Dreamy chord scale (F major 7 / C major 9 chords in Hz)
-    const notes = [
-        261.63, 329.63, 392.00, 493.88, 523.25, // C4, E4, G4, B4, C5
-        349.23, 440.00, 523.25, 659.25,          // F4, A4, C5, E5
-        293.66, 349.23, 440.00, 523.25           // D4, F4, A4, C5
-    ];
-
-    const note = notes[Math.floor(Math.random() * notes.length)];
-    
-    try {
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        const filter = audioCtx.createBiquadFilter();
-
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(note, audioCtx.currentTime);
-
-        filter.type = 'lowpass';
-        filter.frequency.setValueAtTime(800, audioCtx.currentTime);
-
-        const now = audioCtx.currentTime;
-        gain.gain.setValueAtTime(0.001, now);
-        gain.gain.linearRampToValueAtTime(0.12, now + 0.4);
-        gain.gain.exponentialRampToValueAtTime(0.0001, now + 3.5);
-
-        osc.connect(filter);
-        filter.connect(gain);
-        gain.connect(audioCtx.destination);
-
-        osc.start(now);
-        osc.stop(now + 3.6);
-    } catch (e) {
-        console.log("Audio playback error", e);
-    }
-
-    // Interval for next gentle note
-    const nextInterval = Math.random() * 800 + 1200;
-    synthTimer = setTimeout(playRomanticMelody, nextInterval);
-}
-
-function toggleMusic() {
-    const bgAudio = document.getElementById('bgAudio');
-    isMusicPlaying = !isMusicPlaying;
-
-    if (isMusicPlaying) {
-        musicToggleBtn.classList.add('playing');
-        musicToggleBtn.querySelector('.music-text').textContent = 'إيقاف الموسيقى';
-        
-        // Soft audio volume set to 20% (0.2)
-        if (bgAudio && bgAudio.src) {
-            bgAudio.volume = 0.2;
-            bgAudio.play().then(() => {
-                if (synthTimer) clearTimeout(synthTimer);
-            }).catch(() => {
-                initAudio();
-                playRomanticMelody();
-            });
-        } else {
-            initAudio();
-            playRomanticMelody();
-        }
-    } else {
-        musicToggleBtn.classList.remove('playing');
-        musicToggleBtn.querySelector('.music-text').textContent = 'موسيقى هادئة';
-        if (bgAudio) bgAudio.pause();
-        if (synthTimer) clearTimeout(synthTimer);
-    }
-}
-
-function setupMusicToggle() {
-    musicToggleBtn.addEventListener('click', toggleMusic);
-}
-
-/* ==========================================================================
    PASSWORD VALIDATION
    ========================================================================== */
 function setupPasswordForm() {
@@ -244,11 +148,6 @@ function validatePassword() {
         // Correct Password!
         errorMessage.textContent = '';
         glassCard.classList.remove('shake');
-        
-        // Auto start romantic music on user interaction
-        if (!isMusicPlaying) {
-            toggleMusic();
-        }
 
         // Transition to Screen 1
         switchScreen(screenPassword, screen1, () => {
